@@ -1,4 +1,43 @@
+---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: my-namespace
+  name: shashi-test-k8s
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shashi-deploy
+  namespace: shashi-test-k8s
+  labels:
+    app: petclinic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: petclinic
+  template:
+    metadata:
+      labels:
+        app: petclinic
+    spec:
+      containers:
+        - name: shashi
+          image: devopsagilitydev.azurecr.io/petclinic:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-petclinic-service
+  namespace: shashi-test-k8s
+spec:
+  type: LoadBalancer
+  selector:
+    app: petclinic
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
